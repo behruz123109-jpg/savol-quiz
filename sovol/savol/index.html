@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mukammal</title>
+    <link rel="stylesheet" href="./stayle.css">
+</head>
+
+<body>
+    <canvas id="confettiCanvas"></canvas>
+
+    <main class="quiz-container">
+
+        <!-- RO'YXATDAN O'TISH -->
+        <section id="step1" class="step active">
+            <h3>Ro'yhatdan o'ting</h3>
+            <input id="name" type="text" placeholder="Ism familiya">
+            <input id="group" type="text" placeholder="Guruh">
+            <input id="password" type="password" placeholder="Parol">
+            <button id="toStep2">Keyingi ➡️</button>
+        </section>
+
+        <!-- TESTNI BOSHLASH -->
+        <section id="step2" class="step hidden">
+            <h3>Fan va savol soni</h3>
+            <select id="subject">
+                <option value="informatika">📘 Informatika</option>
+                <option value="matematika">📗 Matematika</option>
+                <option value="fizika">📙 Fizika</option>
+                <option value="tarix">📕 Tarix</option>
+            </select>
+            <select id="qcount">
+                <option value="5">5 savol</option>
+                <option value="10" selected>10 savol</option>
+                <option value="15">15 savol</option>
+            </select>
+            <div>
+                <button id="back1" class="ghost">◀️ Orqaga</button>
+                <button id="startQuiz">Boshlash</button>
+            </div>
+        </section>
+
+        <!-- TEST -->
+        <section id="step3" class="step hidden">
+            <div id="quizInfo">
+                <span>Fan: <strong id="metaSubject"></strong></span>
+                <span>Ism: <strong id="metaName"></strong></span>
+                <span>Guruh: <strong id="metaGroup"></strong></span>
+                <span id="timer">⏰ 00:00</span>
+            </div>
+            <div id="progressBar">
+                <div id="progress"></div>
+            </div>
+            <div id="quiz"></div>
+            <div>
+                <button id="prevBtn" class="ghost">◀️ Orqaga</button>
+                <button id="nextBtn">➡️ Keyingi</button>
+                <button id="submitBtn" class="hidden">✅ Tugatish</button>
+            </div>
+            <div>Savollar: <span id="totalCount">0</span></div>
+        </section>
+
+        <!-- NATIJA -->
+        <section id="resultStep" class="step hidden">
+            <div class="result-box">
+                <div id="resultEmoji">🎉</div>
+                <h2 id="resultTitle"></h2>
+                <p id="resultText"></p>
+                <p id="resultDetails"></p>
+                <div>
+                    <button id="sendTelegramResult">🔔 Telegramga yuborish</button>
+                    <button id="retry">🔁 Yana boshlash</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin panel -->
+        <button id="adminBtn" class="ghost smallBtn">⚙️</button>
+        <div id="adminPanel" class="hidden">
+            <h3>Admin panel</h3>
+            <input type="password" id="adminPassword" placeholder="Parol">
+            <button id="loginAdmin">Kirish</button>
+            <div id="adminUsers"></div>
+        </div>
+
+    </main>
+
+    <!-- Reklama modal -->
+    <div id="adModal" class="hidden">
+        <div class="adBox">
+            <h3>Reklama</h3>
+            <p>Reklama ko‘ring va bonus oling!</p>
+            <button id="seeAdBtn">Ko‘rish</button>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+
+</html>
