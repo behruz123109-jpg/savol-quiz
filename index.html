@@ -93,7 +93,7 @@
         </div>
     </main>
 
-    <!-- Reklama modal -->
+<!-- Reklama modal -->
     <div id="adModal" class="hidden">
         <div class="adBox">
             <h3>Reklama</h3>
@@ -181,7 +181,7 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
         let userName='', userGroup='', subject='', qcount=10;
         let pool=[], index=0, score=0, chosen=[], wrongQuestions=[];
 
-        const BANK = {
+const BANK = {
             informatika: [
                 {q:"Axborot deb nimaga aytiladi?", a:["Atrofdagi voqea-hodisalar haqidagi ma'lumotlarga","Faqat matnli ma'lumotlarga","Faqat sonli qiymatlarga"], correct:0},
                 {q:"1 bayt nechta bitdan iborat?", a:["16 bit","8 bit","4 bit"], correct:1},
@@ -231,7 +231,8 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
                 {q:"Yengil massaning tezligi?", a:["v = s/t","F = ma","E = mc²"], correct:0},
                 {q:"Elektr tokining o‘lchov birligi?", a:["Amper","Volt","Ohm"], correct:0},
                 {q:"Quyosh tizimi markazi?", a:["Quyosh","Yer","Oy"], correct:0},
-                {q:"Tezlik formulasi?", a:["v = s/t","v = m/t","v = t/s"], correct:0},
+
+{q:"Tezlik formulasi?", a:["v = s/t","v = m/t","v = t/s"], correct:0},
                 {q:"Kuch birligi?", a:["Newton","Joule","Watt"], correct:0},
                 {q:"Og‘irlik birligi?", a:["Newton","Kilogram","Gram"], correct:0},
                 {q:"Suv qaynash harorati?", a:["100°C","90°C","110°C"], correct:0},
@@ -277,7 +278,7 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
             stepEls[step].classList.add('active');
         }
 
-        toStep2Btn.addEventListener('click', ()=>{
+toStep2Btn.addEventListener('click', ()=>{
             userName = nameInput.value.trim();
             userGroup = groupInput.value.trim();
             if(!userName || !userGroup) return alert('Iltimos, ism va guruhni kiriting.');
@@ -303,13 +304,13 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
             const item = pool[index];
             quizEl.innerHTML='';
             const qdiv = document.createElement('div');
-            qdiv.innerHTML = `<p><strong>${index+1}.</strong> ${item.q}</p>`;
+            qdiv.innerHTML = <p><strong>${index+1}.</strong> ${item.q}</p>;
             quizEl.appendChild(qdiv);
             item.a.forEach((opt,i)=>{
                 const lbl = document.createElement('label');
                 lbl.style.display='block';
                 lbl.style.cursor='pointer';
-                lbl.innerHTML = `<input type="radio" name="opt" value="${i}" ${chosen[index]===i?'checked':''}> ${opt}`;
+                lbl.innerHTML = <input type="radio" name="opt" value="${i}" ${chosen[index]===i?'checked':''}> ${opt};
                 lbl.addEventListener('click',()=>selectOption(i));
                 quizEl.appendChild(lbl);
             });
@@ -339,8 +340,8 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
             const percent = ((score/pool.length)*100).toFixed(1);
             resultEmoji.textContent = percent>=60?'🎉':'🙂';
             resultTitle.textContent = percent>=60?'Tabriklaymiz!':'Yaxshiroq tayyorgarlik kerak';
-            resultText.textContent = `Siz ${subject} fanidan ${score}/${pool.length} (${percent}%) natija oldingiz.`;
-            if(wrongQuestions.length>0) resultText.textContent += ` Xato savollar: ${wrongQuestions.join(', ')}`;
+            resultText.textContent = Siz ${subject} fanidan ${score}/${pool.length} (${percent}%) natija oldingiz.;
+            if(wrongQuestions.length>0) resultText.textContent +=  Xato savollar: ${wrongQuestions.join(', ')};
             goto(4);
         }
 
@@ -354,4 +355,4 @@ Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}
     </script>
     <script src="./sw.js"></script>
 </body>
-</html>
+    </html>
