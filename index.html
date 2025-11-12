@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Quiz </title>
-    <link rel="stylesheet" href="./stayle.css">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -37,6 +37,7 @@
                 <select id="qcount" style="margin-top:8px">
                     <option value="5">5 savol</option>
                     <option value="10" selected>10 savol</option>
+                    <option value="15">15 savol</option>
                     <option value="20">20 savol</option>
                 </select>
                 <div style="display:flex;justify-content:center;gap:8px;margin-top:10px">
@@ -61,7 +62,7 @@
                     <div id="progress"></div>
                 </div>
 
-                <main id="quiz" style="min-height:160px;margin-top:12px"></main>
+                <div id="quiz" style="min-height:160px;margin-top:12px"></div>
 
                 <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
                     <button class="ghost" id="prevBtn">◀️ Orqaga</button>
@@ -102,6 +103,28 @@
     </div>
 
     <script>
+        const sendTelegramBtn = document.getElementById('sendTelegramResult');
+
+sendTelegramBtn.addEventListener('click', ()=>{
+    const message = `📚 Quiz natijasi
+Ism: ${userName}
+Guruh: ${userGroup}
+Fan: ${subject.charAt(0).toUpperCase()+subject.slice(1)}
+Natija: ${score}/${pool.length} (${((score/pool.length)*100).toFixed(1)}%)
+Xato savollar: ${wrongQuestions.length>0 ? wrongQuestions.join(', ') : 'Yo‘q'}`;
+
+    const BOT_TOKEN = '8226398562:AAEPiTFZIQp4VdixrDCJsqfIMv9dEipj0X8';
+    const CHAT_ID = '8488028783';
+    
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    }).then(res=>res.json())
+      .then(data=>alert('Natija Telegramga yuborildi!'))
+      .catch(err=>alert('Xato yuz berdi: '+err));
+});
+
         /* ======================
         Reklama Modal JS
         ====================== */
@@ -148,6 +171,7 @@
         const totalCountEl = document.getElementById('totalCount');
         const metaSubject = document.getElementById('metaSubject');
         const metaName = document.getElementById('metaName');
+        const metaGroup = document.getElementById('metaGroup');
 
         const resultEmoji = document.getElementById('resultEmoji');
         const resultTitle = document.getElementById('resultTitle');
@@ -155,18 +179,96 @@
         const resultDetails = document.getElementById('resultDetails');
 
         let userName='', userGroup='', subject='', qcount=10;
-        let pool=[], index=0, score=0, chosen=[], timer=null, timeLeft=0;
-        let wrongQuestions = [];
+        let pool=[], index=0, score=0, chosen=[], wrongQuestions=[];
 
         const BANK = {
             informatika: [
                 {q:"Axborot deb nimaga aytiladi?", a:["Atrofdagi voqea-hodisalar haqidagi ma'lumotlarga","Faqat matnli ma'lumotlarga","Faqat sonli qiymatlarga"], correct:0},
                 {q:"1 bayt nechta bitdan iborat?", a:["16 bit","8 bit","4 bit"], correct:1},
-                {q:"Kompyuterning asosiy xotirasi qaysi?", a:["ROM","HDD","RAM"], correct:2}
+                {q:"Kompyuterning asosiy xotirasi qaysi?", a:["ROM","HDD","RAM"], correct:2},
+                {q:"HTML ning to‘liq nomi nima?", a:["Hyper Text Markup Language","High Text Markup Language","Hyperlink Text Machine Language"], correct:0},
+                {q:"CSS nima uchun ishlatiladi?", a:["Sahifa dizayni uchun","Matn yozish uchun","Rasm chizish uchun"], correct:0},
+                {q:"JavaScript qaysi maqsadda ishlatiladi?", a:["Interaktivlik qo‘shish","Matn tahrirlash","Grafik yaratish"], correct:0},
+                {q:"IP manzil nechta bitdan iborat?", a:["32 bit","64 bit","128 bit"], correct:0},
+                {q:"RAM qaysi turdagi xotira?", a:["Tezkor xotira","Doimiy xotira","Virtual xotira"], correct:0},
+                {q:"Binary tizimdagi 1010 = ?", a:["10","12","8"], correct:0},
+                {q:"Algoritm nima?", a:["Masalani yechish tartibi","Programma xatolari","Kompyuter tili"], correct:0},
+                {q:"Compiler nima qiladi?", a:["Kodlarni mashina tiliga o‘giradi","Kodlarni tekshiradi","Internetga ulaydi"], correct:0},
+                {q:"Database nima?", a:["Ma'lumotlar to‘plami","Kompyuter xotirasi","Programma fayli"], correct:0},
+                {q:"Cloud computing nima?", a:["Internet orqali resurs ishlatish","Mahalliy kompyuter ishlatish","Grafik chizish"], correct:0},
+                {q:"Boolean tipda qiymatlar?", a:["True/False","0/1/2","A/B/C"], correct:0},
+                {q:"Function nima?", a:["Kod blokini ishlatish","Rasm chizish","Matn tahrirlash"], correct:0},
+                {q:"Loop nima?", a:["Takrorlash operatori","Shart operatori","Funksiya yaratish"], correct:0},
+                {q:"Array nima?", a:["Ro‘yxat","Son","Matn"], correct:0},
+                {q:"Object nima?", a:["Ma’lumotlar to‘plami","Rasm","Matn"], correct:0},
+                {q:"EventListener nima?", a:["Hodisaga javob beruvchi funksiya","Rasm chizuvchi funksiya","Matn tahrirlagichi"], correct:0},
+                {q:"CSS selector nima?", a:["Element tanlovchisi","Kod turi","Rasm turi"], correct:0}
             ],
-            matematika:[
+            matematika: [
                 {q:"2 + 2 = ?", a:["3","4","22"], correct:1},
-                {q:"5 * 6 = ?", a:["30","11","56"], correct:0}
+                {q:"5 * 6 = ?", a:["30","11","56"], correct:0},
+                {q:"12 / 4 = ?", a:["3","4","6"], correct:0},
+                {q:"7 - 3 = ?", a:["4","5","3"], correct:0},
+                {q:"9 + 10 = ?", a:["19","21","20"], correct:0},
+                {q:"15 % 4 = ?", a:["3","4","2"], correct:0},
+                {q:"3^2 = ?", a:["6","9","8"], correct:1},
+                {q:"sqrt(16) = ?", a:["4","2","8"], correct:0},
+                {q:"10! = ?", a:["3628800","362880","720"], correct:0},
+                {q:"Pi ning qiymati?", a:["3.14","3.15","3.41"], correct:0},
+                {q:"x+5=10, x=?", a:["5","15","10"], correct:0},
+                {q:"7*8=?", a:["56","48","64"], correct:0},
+                {q:"100/25=?", a:["4","5","25"], correct:0},
+                {q:"9*9=?", a:["81","72","99"], correct:0},
+                {q:"sqrt(49) = ?", a:["7","6","8"], correct:0},
+                {q:"0+0=?", a:["0","1","-1"], correct:0},
+                {q:"5^0=?", a:["1","5","0"], correct:0},
+                {q:"2^3=?", a:["6","8","9"], correct:1},
+                {q:"10-7=?", a:["3","2","4"], correct:0},
+                {q:"8/2=?", a:["4","3","2"], correct:0}
+            ],
+            fizika: [
+                {q:"Yer gravitatsiyasi nechchi m/s²?", a:["9.8","10","8"], correct:0},
+                {q:"Yengil massaning tezligi?", a:["v = s/t","F = ma","E = mc²"], correct:0},
+                {q:"Elektr tokining o‘lchov birligi?", a:["Amper","Volt","Ohm"], correct:0},
+                {q:"Quyosh tizimi markazi?", a:["Quyosh","Yer","Oy"], correct:0},
+                {q:"Tezlik formulasi?", a:["v = s/t","v = m/t","v = t/s"], correct:0},
+                {q:"Kuch birligi?", a:["Newton","Joule","Watt"], correct:0},
+                {q:"Og‘irlik birligi?", a:["Newton","Kilogram","Gram"], correct:0},
+                {q:"Suv qaynash harorati?", a:["100°C","90°C","110°C"], correct:0},
+                {q:"Atom yadrosi nima?", a:["Proton + Neutron","Elektron","Neutron"], correct:0},
+                {q:"Tezlikni o‘lchash birligi?", a:["m/s","km/h","kg"], correct:0},
+                {q:"Kinetik energiya formula?", a:["E=0.5*m*v²","E=m*g*h","E=m*v"], correct:0},
+                {q:"Potensial energiya formula?", a:["E=m*g*h","E=0.5*m*v²","E=m*v"], correct:0},
+                {q:"Ohm qonuni?", a:["V=IR","I=VR","R=VI"], correct:0},
+                {q:"Magnit induksiya birligi?", a:["Tesla","Henry","Joule"], correct:0},
+                {q:"Bosim formulasi?", a:["P=F/A","P=F*v","P=F*A"], correct:0},
+                {q:"Suyuqlik zichligi?", a:["ρ=m/V","ρ=V/m","ρ=F/A"], correct:0},
+                {q:"Suyuqlik oqimi?", a:["Q=V*A","Q=V/A","Q=A/V"], correct:0},
+                {q:"Quyosh energiyasi manbai?", a:["Termoyadro","Yonish","Atom"], correct:0},
+                {q:"Lazer nurlari nima?", a:["Ko‘p energiyali yorug‘lik","Oddiy yorug‘lik","Rangli yorug‘lik"], correct:0},
+                {q:"Raqamli signal nima?", a:["Diskret qiymatlar","Uzluksiz qiymatlar","Chiziqli signal"], correct:0}
+            ],
+            tarix: [
+                {q:"O‘zbekiston mustaqilligi qachon e'lon qilindi?", a:["1991","1990","1992"], correct:0},
+                {q:"Buyuk Ipak Yo‘li kimlar tomonidan ishlatilgan?", a:["Markaziy Osiyo xalqlari","Evropa xalqlari","Xitoy xalqlari"], correct:0},
+                {q:"Xorazmshohlar qachon hukmronlik qilgan?", a:["XII-XIII asr","XIV-XV asr","X-XI asr"], correct:0},
+                {q:"Janglar qayerda bo‘lgan?", a:["Termiz","Samarqand","Buxoro"], correct:0},
+                {q:"O‘zbekiston poytaxti?", a:["Toshkent","Samarqand","Buxoro"], correct:0},
+                {q:"Amir Temur qachon yashagan?", a:["1336-1405","1300-1370","1400-1450"], correct:0},
+                {q:"O‘zbekiston bayrog‘i ranglari?", a:["Moviy, oq, yashil","Qizil, oq, moviy","Yashil, oq, qizil"], correct:0},
+                {q:"Buyuk ipak yo‘li qaysi asrda?", a:["II-VII asr","X-XII asr","XV-XVI asr"], correct:0},
+                {q:"Mustaqillik kuni?", a:["1-sentabr","31-avgust","2-oktabr"], correct:1},
+                {q:"Birinchi prezident?", a:["Islom Karimov","Shavkat Mirziyoyev","Abdulla Aripov"], correct:0},
+                {q:"O‘zbeklar qaysi hududda yashagan?", a:["Markaziy Osiyo","Sibir","Yevropa"], correct:0},
+                {q:"Samarqand qadimiy shaharmi?", a:["Ha","Yo‘q","Bilmayman"], correct:0},
+                {q:"Buxoro tarixiy shahar?", a:["Ha","Yo‘q","Bilmayman"], correct:0},
+                {q:"Chingizxon kim?", a:["Mo‘g‘ul sarkardasi","Fors shohi","Arab sarkardasi"], correct:0},
+                {q:"Buyuk Sulton qaysi davrda?", a:["XIV asr","XIII asr","XV asr"], correct:0},
+                {q:"O‘zbekiston mustaqil davlat?", a:["Ha","Yo‘q","Bilmayman"], correct:0},
+                {q:"Xiva shahri qaysi hududda?", a:["Xorazm","Buxoro","Samarqand"], correct:0},
+                {q:"Toshkent shahri qachon asos solingan?", a:["2200 yil avval","2000 yil avval","1500 yil avval"], correct:0},
+                {q:"Buyuk Temuriylar davri?", a:["XIV asr","XIII asr","XV asr"], correct:0},
+                {q:"O‘zbekiston hududi tarixiy qachon?", a:["Miloddan avvalgi 2-asr","1-asr","5-asr"], correct:0}
             ]
         };
 
@@ -180,6 +282,7 @@
             userGroup = groupInput.value.trim();
             if(!userName || !userGroup) return alert('Iltimos, ism va guruhni kiriting.');
             metaName.textContent = userName;
+            metaGroup.textContent = userGroup;
             goto(2);
         });
 
@@ -188,7 +291,7 @@
         startQuizBtn.addEventListener('click', ()=>{
             subject = subjectSelect.value;
             qcount = parseInt(qcountSelect.value,10)||10;
-            pool = (BANK[subject]||[]).slice(0,qcount);
+            pool = BANK[subject].slice(0,qcount);
             index=0; score=0; chosen=new Array(pool.length).fill(null); wrongQuestions=[];
             totalCountEl.textContent = pool.length;
             metaSubject.textContent = subject.charAt(0).toUpperCase()+subject.slice(1);
@@ -204,6 +307,8 @@
             quizEl.appendChild(qdiv);
             item.a.forEach((opt,i)=>{
                 const lbl = document.createElement('label');
+                lbl.style.display='block';
+                lbl.style.cursor='pointer';
                 lbl.innerHTML = `<input type="radio" name="opt" value="${i}" ${chosen[index]===i?'checked':''}> ${opt}`;
                 lbl.addEventListener('click',()=>selectOption(i));
                 quizEl.appendChild(lbl);
@@ -214,9 +319,11 @@
         }
 
         function selectOption(i){
-            chosen[index]=i;
-            if(i!==pool[index].correct) wrongQuestions.push(index+1);
-            if(i===pool[index].correct) score+=1;
+            chosen[index] = i;
+            const idx = wrongQuestions.indexOf(index+1);
+            if(idx !== -1) wrongQuestions.splice(idx,1);
+            score = chosen.reduce((acc,val,j)=> acc + (val===pool[j].correct?1:0),0);
+            if(i !== pool[index].correct) wrongQuestions.push(index+1);
         }
 
         nextBtn.addEventListener('click',()=>{
@@ -229,7 +336,6 @@
         submitBtn.addEventListener('click', finishTest);
 
         function finishTest(){
-            clearInterval(timer);
             const percent = ((score/pool.length)*100).toFixed(1);
             resultEmoji.textContent = percent>=60?'🎉':'🙂';
             resultTitle.textContent = percent>=60?'Tabriklaymiz!':'Yaxshiroq tayyorgarlik kerak';
@@ -238,17 +344,14 @@
             goto(4);
         }
 
-        const retryBtn = document.getElementById('retry');
-        retryBtn.addEventListener('click',()=>{
-            nameInput.value=''; groupInput.value=''; 
+        document.getElementById('retry').addEventListener('click',()=>{
+            nameInput.value=''; groupInput.value='';
             goto(1);
         });
-
-        const backBtn = document.getElementById('back');
-        backBtn.addEventListener('click',()=>goto(1));
+        document.getElementById('back').addEventListener('click',()=>goto(1));
 
         goto(1);
     </script>
+    <script src="./sw.js"></script>
 </body>
 </html>
-
